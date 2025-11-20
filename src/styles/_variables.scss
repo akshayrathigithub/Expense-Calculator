@@ -1,0 +1,54 @@
+$root-font-size: 16px;
+
+$font-sizes: (
+  1: 12px,
+  2: 14px,
+  3: 16px,
+  4: 18px,
+  5: 20px,
+  6: 24px,
+  7: 30px,
+  8: 36px,
+  9: 48px,
+  10: 60px,
+  11: 72px,
+  12: 96px,
+  13: 128px,
+);
+
+$space: (
+  0: 0,
+  1: 4px,
+  2: 8px,
+  3: 12px,
+  4: 16px,
+  5: 20px,
+  6: 24px,
+  7: 28px,
+  8: 32px,
+  9: 36px,
+  10: 40px,
+  12: 48px,
+  16: 64px,
+);
+
+$width-percentages: (
+  25: 25%,
+  33: 33.3333%,
+  50: 50%,
+  66: 66.6667%,
+  75: 75%,
+  100: 100%,
+);
+
+$font-weights: (
+  thin: 100,
+  extralight: 200,
+  light: 300,
+  normal: 400,
+  medium: 500,
+  semibold: 600,
+  bold: 700,
+  extrabold: 800,
+  black: 900,
+);

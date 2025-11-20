@@ -1,0 +1,23 @@
+.textarea {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 120ms ease-in-out, box-shadow 120ms ease-in-out;
+}
+
+.textarea:focus {
+  border-color: rgba(99, 102, 241, 0.75);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.textareaError {
+  border-color: #ef4444;
+}
+
+.textareaError:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+}
+
+/* Helper and error text now use utility classes */

@@ -1,0 +1,135 @@
+@use "./variables" as *;
+@use "./mixins" as *;
+
+// Spacing (margin, padding)
+@include spacing-utilities("m", "margin");
+@include spacing-utilities("p", "padding");
+
+// Gap utilities
+@each $k, $v in $space {
+  .gap-#{$k} {
+    gap: #{$v};
+  }
+  .gap-x-#{$k} {
+    column-gap: #{$v};
+  }
+  .gap-y-#{$k} {
+    row-gap: #{$v};
+  }
+  .rounded-#{$k} {
+    border-radius: #{$v};
+  }
+}
+
+// Font sizes
+@each $k, $v in $font-sizes {
+  .fs-#{$k} {
+    font-size: #{$v};
+  }
+}
+
+// Flexbox
+.flex {
+  display: flex;
+}
+.inline-flex {
+  display: inline-flex;
+}
+.flex-row {
+  flex-direction: row;
+}
+.flex-col {
+  flex-direction: column;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.flex-nowrap {
+  flex-wrap: nowrap;
+}
+.items-start {
+  align-items: flex-start;
+}
+.items-center {
+  align-items: center;
+}
+.items-end {
+  align-items: flex-end;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-around {
+  justify-content: space-around;
+}
+.flex-1 {
+  flex: 1 1 0%;
+}
+.flex-none {
+  flex: none;
+}
+
+// Width percentages
+@each $k, $v in $width-percentages {
+  .w-#{$k} {
+    width: #{$v};
+  }
+}
+
+// Common width/height
+.w-full {
+  width: 100%;
+}
+.h-full {
+  height: 100%;
+}
+.w-auto {
+  width: auto;
+}
+.h-auto {
+  height: auto;
+}
+.w-screen {
+  width: 100vw;
+}
+.h-screen {
+  height: 100vh;
+}
+
+.absolute {
+  position: absolute;
+}
+.relative {
+  position: relative;
+}
+
+// border
+.bordered {
+  border: 1px solid rgba(51, 65, 85, 0.4); /* slate-700/40 */
+}
+
+// Width/height by spacing scale
+@each $k, $v in $space {
+  .w-s-#{$k} {
+    width: #{$v};
+  }
+  .h-s-#{$k} {
+    height: #{$v};
+  }
+}
+
+// Font weights
+@each $k, $v in $font-weights {
+  .fw-#{"" + $k} {
+    font-weight: #{$v};
+  }
+}

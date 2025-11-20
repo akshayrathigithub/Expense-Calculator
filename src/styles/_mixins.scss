@@ -1,0 +1,29 @@
+@use "./variables" as *;
+
+@mixin spacing-utilities($class-prefix, $css-prop) {
+  @each $k, $v in $space {
+    .#{$class-prefix}-#{$k} {
+      #{$css-prop}: #{$v};
+    }
+    .#{$class-prefix}t-#{$k} {
+      #{$css-prop}-top: #{$v};
+    }
+    .#{$class-prefix}r-#{$k} {
+      #{$css-prop}-right: #{$v};
+    }
+    .#{$class-prefix}b-#{$k} {
+      #{$css-prop}-bottom: #{$v};
+    }
+    .#{$class-prefix}l-#{$k} {
+      #{$css-prop}-left: #{$v};
+    }
+    .#{$class-prefix}x-#{$k} {
+      #{$css-prop}-left: #{$v};
+      #{$css-prop}-right: #{$v};
+    }
+    .#{$class-prefix}y-#{$k} {
+      #{$css-prop}-top: #{$v};
+      #{$css-prop}-bottom: #{$v};
+    }
+  }
+}

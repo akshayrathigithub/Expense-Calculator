@@ -1,0 +1,90 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #0b1410;
+  color: white;
+  padding: 1rem;
+}
+
+.card {
+  max-width: 42rem; /* max-w-2xl */
+  width: 100%;
+  background-color: #111915;
+  border: 1px solid #1f2937; /* border-gray-800 */
+  border-radius: 0.5rem;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+}
+
+.title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #9ca3af; /* text-gray-400 */
+  margin-bottom: 1.5rem;
+}
+
+.contentArea {
+  height: 24rem; /* h-96 */
+  overflow-y: auto;
+  padding-right: 1rem;
+  margin-bottom: 2rem;
+  color: #d1d5db; /* text-gray-300 */
+  font-size: 0.875rem; /* text-sm */
+
+  /* Custom scrollbar styling if needed, though browser default might be okay or handled globally */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #1f2937;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 4px;
+  }
+
+  > * + * {
+    margin-top: 1rem; /* space-y-4 */
+  }
+}
+
+.sectionTitle {
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 1rem; /* space-x-4 */
+  padding-top: 1rem;
+  border-top: 1px solid #1f2937; /* border-gray-800 */
+}
+
+.declineButton {
+  background-color: #2c3531;
+  color: white;
+  border: none;
+
+  &:hover {
+    background-color: #3a4440;
+  }
+}
+
+.acceptButton {
+  background-color: #00e05e;
+  color: black;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #00c050;
+  }
+}

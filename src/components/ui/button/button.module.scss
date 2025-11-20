@@ -1,0 +1,50 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 16px;
+  color: #fff;
+  cursor: pointer;
+  transition: background 120ms ease-in-out, color 120ms ease-in-out,
+    opacity 120ms ease-in-out, border-color 120ms ease-in-out;
+  outline: none;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.primary {
+  background-color: green;
+  color: #000;
+}
+
+.link {
+  background-color: transparent;
+  color: green;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
+
+.label {
+  display: inline-block;
+}
+
+.disabled,
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

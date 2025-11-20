@@ -1,0 +1,31 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.6); /* slate-950 @ 60% */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.content {
+  background: #0f172a; /* slate-900 */
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 12px;
+  min-width: 320px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow: auto;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45);
+}
+
+.header {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.24);
+  font-weight: 700;
+}
+
+.body {
+  padding: 16px;
+}

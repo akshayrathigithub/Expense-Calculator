@@ -1,0 +1,36 @@
+.container {
+  padding: 16px;
+  color: #e2e8f0; /* slate-100 */
+}
+
+.titleRow {
+  margin-bottom: 12px;
+}
+
+.tagList {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.15); /* emerald-500/15 */
+  color: #86efac; /* emerald-300 */
+  font-size: 12px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
