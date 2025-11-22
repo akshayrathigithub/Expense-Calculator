@@ -86,7 +86,7 @@ export const Dropdown = (props: DropdownProps) => {
       border: "1px solid rgba(148,163,184,0.24)",
       borderRadius: 8,
       overflow: "hidden",
-      zIndex: 10,
+      zIndex: 20,
     }),
     option: (base, state) => ({
       ...base,

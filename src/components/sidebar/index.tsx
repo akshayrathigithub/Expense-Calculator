@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useUiStore } from "../../store/ui";
-import styles from "./index.module.scss";
+import styles from "./sidebar.module.scss";
 import DashboardIcon from "../../assets/dashboard.svg?react";
 import clsx from "clsx";
 

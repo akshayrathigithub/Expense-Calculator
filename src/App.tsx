@@ -11,6 +11,7 @@ import {
 import { Dashboard } from "@src/pages/dashboard";
 import { Expenses } from "@src/pages/expenses";
 import { Reports } from "@src/pages/reports";
+import { Settings } from "@src/pages/settings";
 import { useUiStore } from "@src/store/ui";
 import { Bounce, ToastContainer } from "react-toastify";
 import { getOnboardingStatus } from "@src/lib/users";
@@ -39,6 +40,7 @@ function App() {
           }
         } else {
           setIsOnboarding(false);
+          await useUiStore.getState().initApp();
         }
       } catch (e) {
         console.error("Failed to check onboarding status", e);
@@ -71,6 +73,11 @@ function App() {
         active: pathname === "/tags",
         onClick: () => navigate("/tags"),
       },
+      {
+        label: "Settings",
+        active: pathname === "/settings",
+        onClick: () => navigate("/settings"),
+      },
     ],
     [pathname]
   );
@@ -80,7 +87,7 @@ function App() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       {!isOnboarding && (
         <Sidebar
           defaultCollapsed={false}
@@ -90,7 +97,7 @@ function App() {
         />
       )}
       <div
-        className={isOnboarding ? "" : "bg-slate-900"}
+        className={isOnboarding ? "" : "bg-green-950 h-full"}
         style={{
           marginLeft: isOnboarding ? 0 : sidebarWidth,
           width: isOnboarding ? "100%" : `calc(100% - ${sidebarWidth}px)`,
@@ -113,13 +120,14 @@ function App() {
               <Route path="/expenses" element={<Expenses />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/tags" element={<TagsPreview />} />
+              <Route path="/settings" element={<Settings />} />
             </>
           )}
         </Routes>
       </div>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={3000}
         hideProgressBar={true}
         newestOnTop
         rtl={false}

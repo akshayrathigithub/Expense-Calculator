@@ -119,6 +119,7 @@ export const DatePicker = (props: DatePickerProps) => {
           animate
           mode="single"
           selected={selectedSingle ? new Date(selectedSingle) : undefined}
+          defaultMonth={selectedSingle ? new Date(selectedSingle) : new Date()}
           onSelect={(d) => {
             if (!d) return;
             setSelectedSingle(d.getTime());

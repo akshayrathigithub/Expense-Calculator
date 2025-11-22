@@ -66,7 +66,7 @@ export function TagsPreview({ className, style }: TagsPreviewProps) {
     nodeId: "",
     parentId: "",
   });
-  const { renameCategory, removeCategory, addCategory, categories, addUser } =
+  const { renameCategory, removeCategory, addCategory, categories } =
     useUiStore();
   const [tagsList, setTagsList] = useState<Record<string, TagNode>>(categories);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(
@@ -84,10 +84,6 @@ export function TagsPreview({ className, style }: TagsPreviewProps) {
       return next;
     });
   }
-
-  const createUser = async () => {
-    await addUser("Akshay Rathi");
-  };
 
   const markTagForEditing = (node: TagNode, parentId: string) => {
     setEditingTag({ newName: node.name, nodeId: node.id, parentId });
@@ -286,7 +282,6 @@ export function TagsPreview({ className, style }: TagsPreviewProps) {
   return (
     <div className={clsx(styles.container, className)} style={style}>
       <Button onClick={() => handleAddChild("")}>Add Root Tag</Button>
-      <Button onClick={createUser}>Create User</Button>
       {Object.keys(tagsList).length > 0 ? (
         renderNodes(tagsList)
       ) : (

@@ -86,34 +86,28 @@ export async function createCategory(
 ): Promise<string> {
   const db = await getDb();
   const id = categoryId;
-  try {
-    await db.execute("BEGIN");
-    await db.execute(
-      "INSERT INTO categories (id, user_id, name, slug, created_at, updated_at) VALUES ($1, $2, $3, NULL, unixepoch(), unixepoch())",
-      [id, userId, name]
-    );
-    // self link
-    await db.execute(
-      "INSERT INTO category_closure (user_id, ancestor, descendant, depth) VALUES ($1, $2, $2, 0)",
-      [userId, id]
-    );
 
-    if (parentId) {
-      // inherit all ancestors from parent (including the parent itself)
-      await db.execute(
-        `INSERT INTO category_closure (user_id, ancestor, descendant, depth)
-         SELECT $1 AS user_id, ancestor, $2 AS descendant, depth + 1
-         FROM category_closure
-         WHERE user_id = $1 AND descendant = $3`,
-        [userId, id, parentId]
-      );
-    }
-    await db.execute("COMMIT");
-    return id;
-  } catch (e) {
-    await db.execute("ROLLBACK");
-    throw e;
+  await db.execute(
+    "INSERT INTO categories (id, user_id, name, slug, created_at, updated_at) VALUES ($1, $2, $3, NULL, CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER), CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER))",
+    [id, userId, name]
+  );
+  // self link
+  await db.execute(
+    "INSERT INTO category_closure (user_id, ancestor, descendant, depth) VALUES ($1, $2, $2, 0)",
+    [userId, id]
+  );
+
+  if (parentId) {
+    // inherit all ancestors from parent (including the parent itself)
+    await db.execute(
+      `INSERT INTO category_closure (user_id, ancestor, descendant, depth)
+        SELECT $1 AS user_id, ancestor, $2 AS descendant, depth + 1
+        FROM category_closure
+        WHERE user_id = $1 AND descendant = $3`,
+      [userId, id, parentId]
+    );
   }
+  return id;
 }
 
 /**
@@ -126,7 +120,7 @@ export async function updateCategoryName(
 ): Promise<void> {
   const db = await getDb();
   await db.execute(
-    "UPDATE categories SET name = $1, updated_at = unixepoch() WHERE id = $2 AND user_id = $3",
+    "UPDATE categories SET name = $1, updated_at = CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER) WHERE id = $2 AND user_id = $3",
     [newName, categoryId, userId]
   );
 }
@@ -146,17 +140,11 @@ export async function deleteCategorySubtree(
     [userId, categoryId]
   )) as Array<{ descendant: string }>;
   if (!rows.length) return;
-  try {
-    await db.execute("BEGIN");
-    for (const r of rows) {
-      await db.execute(
-        "DELETE FROM categories WHERE user_id = $1 AND id = $2",
-        [userId, r.descendant]
-      );
-    }
-    await db.execute("COMMIT");
-  } catch (e) {
-    await db.execute("ROLLBACK");
-    throw e;
+
+  for (const r of rows) {
+    await db.execute("DELETE FROM categories WHERE user_id = $1 AND id = $2", [
+      userId,
+      r.descendant,
+    ]);
   }
 }

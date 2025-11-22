@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS categories (
   user_id TEXT NOT NULL,
   name TEXT NOT NULL,
   slug TEXT,
-  created_at INTEGER NOT NULL DEFAULT (unixepoch()),
-  updated_at INTEGER NOT NULL DEFAULT (unixepoch()),
+  created_at INTEGER NOT NULL DEFAULT (CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER)),
+  updated_at INTEGER NOT NULL DEFAULT (CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER)),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

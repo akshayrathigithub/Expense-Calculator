@@ -1,7 +1,7 @@
-export function formatCurrency(amount: number) {
+export function formatCurrency(amountInCents: number) {
   return new Intl.NumberFormat(undefined, {
     style: "currency",
     currency: "INR",
     minimumFractionDigits: 2,
-  }).format(amount);
+  }).format(amountInCents / 100);
 }

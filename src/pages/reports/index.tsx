@@ -8,7 +8,7 @@ import { useUiStore } from "@src/store/ui";
 import { tableColumns } from "@src/utils/com";
 import clsx from "clsx";
 import { useMemo, useState } from "react";
-import styles from "./index.module.scss";
+import styles from "./reports.module.scss";
 import {
   DATE_RANGE_OPTIONS,
   GROUP_BY_OPTIONS,
@@ -23,9 +23,13 @@ import {
 import { formatDate } from "date-fns";
 import cloneDeep from "lodash/cloneDeep";
 import { Button } from "@src/components/ui/button";
-import { getExpenses, getExpensesByCategories } from "@src/lib/expense";
+import {
+  getExpensesByTimeGranularity,
+  getExpensesByCategories,
+} from "@src/lib/expense";
 import { ReportsDetails } from "./details";
 import { toast } from "react-toastify";
+import { formatCurrency } from "@src/utils/common";
 
 export function Reports() {
   const { categories, users } = useUiStore();
@@ -52,13 +56,22 @@ export function Reports() {
     rawData: any;
     barData: any[];
     tableData: ExpenseRow[];
+    totalIncome: number;
+    totalTransactions: number;
+    totalExpenses: number;
+    hiddenColumns: string[];
   }>({
     rawData: [],
     barData: [],
     tableData: [],
+    totalIncome: 0,
+    totalTransactions: 0,
+    totalExpenses: 0,
+    hiddenColumns: [],
   });
   const columns = tableColumns({
     onTransactionClick,
+    hiddenColumns: reportData.hiddenColumns,
   });
 
   const barData = [
@@ -73,58 +86,18 @@ export function Reports() {
     { category: "Other", amount: 74.15 },
   ];
 
-  const data = useMemo<ExpenseRow[]>(
-    () => [
-      {
-        date: 1731235200000,
-        description: "Software Subscription",
-        amount: 29,
-        transactions: 1,
-        tags: ["Work"],
-      },
-      {
-        date: 1731235200000,
-        description: "Lunch Meeting",
-        amount: 85.5,
-        transactions: 17,
-        tags: ["Food", "Work"],
-      },
-      {
-        date: 1731235200000,
-        description: "Groceries",
-        amount: 112.3,
-        transactions: 20,
-        tags: ["Food"],
-      },
-      {
-        date: 1731235200000,
-        description: "Flight to SFO",
-        amount: 450,
-        transactions: 12,
-        tags: ["Travel"],
-      },
-      {
-        date: 1731235200000,
-        description: "Office Supplies",
-        amount: 45.15,
-        transactions: 80,
-        tags: ["Work"],
-      },
-    ],
-    []
-  );
-
   const handleApply = async () => {
     const { dateRange, categories, groupBy, type } = filters;
     const { startDate, endDate } = dateRange;
     const userId = users.selectedId;
+
     if (userId && startDate && endDate) {
       const duration = {
         start: startDate,
         end: endDate,
       };
 
-      let fetchPromise = null;
+      let fetchPromise: Promise<any> | null = null;
       if (groupBy === "category") {
         fetchPromise = getExpensesByCategories({
           userId,
@@ -132,7 +105,7 @@ export function Reports() {
           duration,
         });
       } else {
-        fetchPromise = getExpenses({
+        fetchPromise = getExpensesByTimeGranularity({
           userId,
           duration,
           categories,
@@ -148,13 +121,22 @@ export function Reports() {
 
       try {
         const expenses = await fetchPromise;
-        console.log(expenses, "expenses");
-        const formattedData = formatTabularData(expenses, groupBy);
-        console.log(formattedData, "formattedData");
+
+        const {
+          tableData,
+          totalIncome,
+          totalTransactions,
+          totalExpenses,
+          hiddenColumns,
+        } = formatTabularData(expenses, groupBy);
         setReportData({
           rawData: expenses,
-          barData: formattedData,
-          tableData: formattedData,
+          barData: [],
+          tableData,
+          totalIncome,
+          totalTransactions,
+          totalExpenses,
+          hiddenColumns,
         });
         // Handle the expenses data here
       } catch (error) {
@@ -315,17 +297,21 @@ export function Reports() {
       <div className="flex justify-start gap-4 my-4">
         <div className="bordered p-6 rounded-2">
           <div className="fs-1 mb-2">Total Expense</div>
-          <div className="fs-4 fw-bold">$1000</div>
+          <div className="fs-4 fw-bold">
+            {formatCurrency(reportData.totalExpenses)}
+          </div>
         </div>
 
         <div className="bordered p-6 rounded-2">
           <div className="fs-1 mb-2">Transactions</div>
-          <div className="fs-4 fw-bold">100</div>
+          <div className="fs-4 fw-bold">{reportData.totalTransactions}</div>
         </div>
 
         <div className="bordered p-6 rounded-2">
           <div className="fs-1 mb-2">Total Income</div>
-          <div className="fs-4 fw-bold">$1000</div>
+          <div className="fs-4 fw-bold">
+            {formatCurrency(reportData.totalIncome)}
+          </div>
         </div>
       </div>
     );
@@ -334,7 +320,7 @@ export function Reports() {
   const renderCharts = () => {
     return (
       <>
-        <div className={clsx("bordered rounded-2 p-2 bg-slate-800")}>
+        {/* <div className={clsx("bordered rounded-2 p-2 bg-slate-800")}>
           <BarChart
             data={barData}
             xKey="category"
@@ -342,10 +328,14 @@ export function Reports() {
             height={220}
             yTickFormatter={(v) => `$${(v as number).toFixed(0)}`}
           />
-        </div>
+        </div> */}
 
         <div className="mt-2">
-          <DataTable data={reportData.tableData} columns={columns} />
+          <DataTable
+            data={reportData.tableData}
+            columns={columns}
+            maxHeight="400px"
+          />
         </div>
       </>
     );
@@ -388,7 +378,7 @@ export function Reports() {
   }
 
   return (
-    <div className="p-2 text-slate-100">
+    <div className="p-2 text-slate-100 h-full flex flex-col">
       {renderReportHeader()}
       {renderForm()}
       {renderSummary()}

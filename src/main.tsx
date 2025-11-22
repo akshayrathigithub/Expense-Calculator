@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./styles/index.scss";
 import { BrowserRouter } from "react-router";
-import { useUiStore } from "@src/store/ui";
 import { getDb } from "@src/lib/db";
 
 async function bootstrap() {
@@ -15,7 +14,6 @@ async function bootstrap() {
       // Open DB first so plugin applies migrations before any selects.
       const db = await getDb();
       await db.execute("SELECT 1");
-      await useUiStore.getState().initApp();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error("DB bootstrap failed", err);

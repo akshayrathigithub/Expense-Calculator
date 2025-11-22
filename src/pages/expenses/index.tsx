@@ -36,7 +36,7 @@ export function Expenses() {
     try {
       await addExpense(form, users.selectedId);
       setRecentlySelectedDate(form.date);
-      setForm(defaultForm);
+      setForm({ ...defaultForm, date: recentlySelectedDate });
       toast.success("Expense added successfully");
     } catch (error) {
       toast.error("Failed to add expense");
@@ -60,9 +60,7 @@ export function Expenses() {
           <DatePicker
             label="Date"
             defaultValue={form.date}
-            onChange={(date) =>
-              setForm({ ...form, date: Math.floor(date.getTime() / 1000) })
-            }
+            onChange={(date) => setForm({ ...form, date: date.getTime() })}
           />
         </div>
 

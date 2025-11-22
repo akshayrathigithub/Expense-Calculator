@@ -2,18 +2,20 @@
   border-radius: 8px;
   border: 1px solid rgba(51, 65, 85, 0.4); /* slate-700/40 */
   background: rgba(30, 41, 59, 0.4); /* slate-800/40 */
-  overflow: hidden;
+  overflow: auto;
 }
 
 ._table {
   width: 100%;
   font-size: 14px;
-  border-collapse: collapse;
+  border-collapse: separate; /* Required for sticky headers to work properly with borders */
+  border-spacing: 0;
 }
 
 ._thead {
-  background: rgba(30, 41, 59, 0.4);
-  color: #cbd5e1; /* slate-300 */
+  background: #1e293b;
+  color: #cbd5e1;
+  /* Move sticky to th for better support */
 }
 
 ._th {
@@ -21,6 +23,10 @@
   font-weight: 600;
   padding: 12px 16px;
   border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+  background: #1e293b;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 ._row:hover {

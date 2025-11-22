@@ -118,7 +118,7 @@ export async function getExpenseDetailsByIds({
       id: row.id,
       amountCents: Number(row.amount_cents),
       currency: row.currency,
-      occurredAt: Number(row.occurred_at) * 1000,
+      occurredAt: Number(row.occurred_at),
       note: row.note ?? null,
       categories: categoryMap.get(row.id) ?? [],
     });
@@ -141,32 +141,31 @@ type Transaction = {
   }>;
 };
 
-type BucketResult = {
-  totalAmount: number;
-  startDate: number;
-  endDate: number;
-  transactions: Transaction[];
+type ExpenseRow = {
+  id: string;
+  amount_cents: number;
+  occurred_at: number;
+  note: string | null;
+  category_id: string;
+  category_name: string;
+  category_path: string | null;
 };
 
-export async function getExpenses({
+async function fetchExpensesWithCategories({
   userId,
   duration,
   categories,
-  granularity,
+  orderBy = "ee.occurred_at ASC",
 }: {
   userId: string;
-  duration: {
-    start: number;
-    end: number;
-  };
+  duration: { start: number; end: number };
   categories: string[];
-  granularity: string;
-}): Promise<BucketResult[]> {
+  orderBy?: string;
+}): Promise<ExpenseRow[]> {
   const db = await getDb();
-  const start = duration.start;
-  const end = duration.end;
+  const { start, end } = duration;
 
-  // Step 1: Normalize selected categories to remove redundant descendants
+  // Step 1: Normalize selected categories
   let canonicalCategories: string[] = [];
   if (categories.length > 0) {
     const placeholders = categories.map((_, i) => `$${i + 2}`).join(",");
@@ -192,7 +191,7 @@ export async function getExpenses({
     canonicalCategories = categories.filter((c) => !redundantSet.has(c));
   }
 
-  // Step 2: Expand canonical categories to include all descendants
+  // Step 2: Expand canonical categories
   let expandedCategories: string[] = [];
   if (canonicalCategories.length > 0) {
     const placeholders = canonicalCategories
@@ -210,16 +209,22 @@ export async function getExpenses({
     expandedCategories = expanded.map((e) => e.descendant);
   }
 
-  // Step 3: Build category filter for SQL
-  const categoryFilter =
-    expandedCategories.length > 0
-      ? `AND ec.category_id IN (${expandedCategories
-          .map((c) => `'${c}'`)
-          .join(",")})`
-      : "";
+  // Step 3: Build category filter
+  let categoryFilter = "";
+  if (categories.length > 0) {
+    if (expandedCategories.length > 0) {
+      categoryFilter = `AND ec.category_id IN (${expandedCategories
+        .map((c) => `'${c}'`)
+        .join(",")})`;
+    } else {
+      // Categories were selected but resolved to nothing (e.g. invalid IDs)
+      // Should return no results
+      categoryFilter = "AND 1 = 0";
+    }
+  }
 
-  // Step 4: Fetch all expenses with their categories and paths
-  const rows = (await db.select(
+  // Step 4: Fetch expenses
+  return (await db.select(
     `
     SELECT 
       ee.id,
@@ -243,18 +248,39 @@ export async function getExpenses({
       AND ee.occurred_at BETWEEN $2 AND $3
       AND ee.deleted = 0
       ${categoryFilter}
-    ORDER BY ee.occurred_at ASC
+    ORDER BY ${orderBy}
   `,
     [userId, start, end]
-  )) as Array<{
-    id: string;
-    amount_cents: number;
-    occurred_at: number;
-    note: string | null;
-    category_id: string;
-    category_name: string;
-    category_path: string | null;
-  }>;
+  )) as ExpenseRow[];
+}
+
+type BucketResult = {
+  totalAmount: number;
+  startDate: number;
+  endDate: number;
+  transactions: Transaction[];
+};
+
+export async function getExpensesByTimeGranularity({
+  userId,
+  duration,
+  categories,
+  granularity,
+}: {
+  userId: string;
+  duration: {
+    start: number;
+    end: number;
+  };
+  categories: string[];
+  granularity: string;
+}): Promise<BucketResult[]> {
+  const rows = await fetchExpensesWithCategories({
+    userId,
+    duration,
+    categories,
+    orderBy: "ee.occurred_at ASC",
+  });
 
   // Step 5: Group expenses by transaction ID to collect categories
   const transactionMap = new Map<string, Transaction>();
@@ -263,7 +289,7 @@ export async function getExpenses({
       transactionMap.set(row.id, {
         id: row.id,
         amount: row.amount_cents,
-        occurredAt: Number(row.occurred_at) * 1000,
+        occurredAt: row.occurred_at,
         note: row.note || "",
         categories: [],
       });
@@ -341,99 +367,12 @@ export async function getExpensesByCategories({
     }>;
   }>
 > {
-  const db = await getDb();
-  const start = duration.start;
-  const end = duration.end;
-
-  // Step 1: Normalize selected categories to remove redundant descendants
-  let canonicalCategories: string[] = [];
-  if (categories.length > 0) {
-    const placeholders = categories.map((_, i) => `$${i + 2}`).join(",");
-    const redundant = (await db.select(
-      `
-      SELECT DISTINCT cc.descendant
-      FROM category_closure cc
-      WHERE cc.user_id = $1
-        AND cc.descendant IN (${placeholders})
-        AND cc.depth > 0
-        AND EXISTS (
-          SELECT 1 FROM category_closure cc2
-          WHERE cc2.user_id = $1
-            AND cc2.ancestor IN (${placeholders})
-            AND cc2.descendant = cc.descendant
-            AND cc2.ancestor != cc2.descendant
-        )
-    `,
-      [userId, ...categories]
-    )) as Array<{ descendant: string }>;
-
-    const redundantSet = new Set(redundant.map((r) => r.descendant));
-    canonicalCategories = categories.filter((c) => !redundantSet.has(c));
-  }
-
-  // Step 2: Expand canonical categories to include all descendants
-  let expandedCategories: string[] = [];
-  if (canonicalCategories.length > 0) {
-    const placeholders = canonicalCategories
-      .map((_, i) => `$${i + 2}`)
-      .join(",");
-    const expanded = (await db.select(
-      `
-      SELECT DISTINCT descendant
-      FROM category_closure
-      WHERE user_id = $1
-        AND ancestor IN (${placeholders})
-    `,
-      [userId, ...canonicalCategories]
-    )) as Array<{ descendant: string }>;
-    expandedCategories = expanded.map((e) => e.descendant);
-  }
-
-  // Step 3: Build category filter for SQL
-  const categoryFilter =
-    expandedCategories.length > 0
-      ? `AND ec.category_id IN (${expandedCategories
-          .map((c) => `'${c}'`)
-          .join(",")})`
-      : "";
-
-  // Step 4: Fetch all expenses with their categories and paths
-  const rows = (await db.select(
-    `
-    SELECT
-      ee.id,
-      ee.amount_cents,
-      ee.occurred_at,
-      ee.note,
-      c.id AS category_id,
-      c.name AS category_name,
-      (
-        SELECT GROUP_CONCAT(ancestor_cat.name, ' > ')
-        FROM category_closure cc2
-        INNER JOIN categories ancestor_cat ON ancestor_cat.id = cc2.ancestor
-        WHERE cc2.descendant = c.id 
-          AND cc2.user_id = $1
-        ORDER BY cc2.depth DESC
-      ) AS category_path
-    FROM expense_entries ee
-    INNER JOIN expense_categories ec ON ec.expense_id = ee.id
-    INNER JOIN categories c ON c.id = ec.category_id
-    WHERE ee.user_id = $1
-      AND ee.occurred_at BETWEEN $2 AND $3
-      AND ee.deleted = 0
-      ${categoryFilter}
-    ORDER BY ee.amount_cents DESC
-  `,
-    [userId, start, end]
-  )) as Array<{
-    id: string;
-    amount_cents: number;
-    occurred_at: number;
-    note: string | null;
-    category_id: string;
-    category_name: string;
-    category_path: string | null;
-  }>;
+  const rows = await fetchExpensesWithCategories({
+    userId,
+    duration,
+    categories,
+    orderBy: "ee.amount_cents DESC",
+  });
 
   // Step 5: Group by category and aggregate
   const categoryMap = new Map<
@@ -470,13 +409,13 @@ export async function getExpensesByCategories({
     }
 
     const category = categoryMap.get(row.category_id)!;
-    const amountInDollars = row.amount_cents / 100;
+    const amountInCents = row.amount_cents;
 
-    category.totalAmount += amountInDollars;
+    category.totalAmount += amountInCents;
     category.transactions.push({
       id: row.id,
-      amount: amountInDollars,
-      occurredAt: Number(row.occurred_at) * 1000,
+      amount: amountInCents,
+      occurredAt: row.occurred_at,
       note: row.note || "",
     });
   }

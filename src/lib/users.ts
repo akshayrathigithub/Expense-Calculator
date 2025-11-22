@@ -38,7 +38,7 @@ export async function createUser(displayName: string): Promise<string> {
   const db = await getDb();
   const id = nanoid();
   await db.execute(
-    "INSERT INTO users (id, display_name, email, created_at, updated_at) VALUES ($1, $2, NULL, unixepoch(), unixepoch())",
+    "INSERT INTO users (id, display_name, created_at, updated_at) VALUES ($1, $2, CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER), CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER))",
     [id, displayName]
   );
   return id;

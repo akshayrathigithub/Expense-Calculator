@@ -4,12 +4,13 @@ import { Button } from "@src/components/ui/button";
 
 interface ColumnProps {
   onTransactionClick?: ({ index, id }: { index: number; id?: string }) => void;
+  hiddenColumns?: string[];
 }
 
 export const tableColumns = (props?: ColumnProps): ColumnDef<ExpenseRow>[] => {
   const onTransactionClick = props?.onTransactionClick;
 
-  return [
+  const defaultColumns: ColumnDef<ExpenseRow>[] = [
     {
       header: "Date",
       accessorKey: "date",
@@ -74,4 +75,16 @@ export const tableColumns = (props?: ColumnProps): ColumnDef<ExpenseRow>[] => {
       },
     },
   ];
+
+  if (props?.hiddenColumns) {
+    return defaultColumns.filter((col) => {
+      // Check if the column has an accessorKey property
+      if ("accessorKey" in col) {
+        return !props.hiddenColumns?.includes(col.accessorKey);
+      }
+      return true;
+    });
+  }
+
+  return defaultColumns;
 };

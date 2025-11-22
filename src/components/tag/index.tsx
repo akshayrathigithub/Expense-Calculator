@@ -12,7 +12,7 @@ export const Tag = ({
     <div className="flex items-center gap-2">
       <div>{name}</div>
       {onDelete && (
-        <Button variant="ghost" onClick={onDelete}>
+        <Button variant="link" onClick={onDelete}>
           <CrossIcon />
         </Button>
       )}

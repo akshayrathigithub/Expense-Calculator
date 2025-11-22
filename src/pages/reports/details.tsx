@@ -19,7 +19,7 @@ export const ReportsDetails = (props: ReportsDetailsProps) => {
       <h1 className="fs-6 fw-bold mt-2">All Transactions List</h1>
 
       <div className="mt-2">
-        <DataTable data={transactions} columns={columns} />
+        <DataTable data={transactions} columns={columns} maxHeight="600px" />
       </div>
     </div>
   );
