@@ -71,6 +71,11 @@
 .justify-around {
   justify-content: space-around;
 }
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .flex-1 {
   flex: 1 1 0%;
 }

@@ -16,6 +16,7 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const classNames = clsx(
     styles.button,
+    "center rounded-1 px-1 py-2",
     {
       [styles.primary]: variant === "primary",
       [styles.link]: variant === "link",

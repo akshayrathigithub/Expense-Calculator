@@ -78,7 +78,8 @@ export function Settings() {
               <div
                 className={clsx(
                   styles.avatar,
-                  user.active ? styles.green : styles.blue
+                  user.active ? styles.green : styles.blue,
+                  "fs-9 center fw-semibold"
                 )}
               >
                 {user.displayName.charAt(0).toUpperCase()}

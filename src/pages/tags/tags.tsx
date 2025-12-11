@@ -69,9 +69,7 @@ export function TagsPreview({ className, style }: TagsPreviewProps) {
   const { renameCategory, removeCategory, addCategory, categories } =
     useUiStore();
   const [tagsList, setTagsList] = useState<Record<string, TagNode>>(categories);
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(
-    new Set(Object.keys(categories))
-  );
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   useEffect(() => {
     console.log("categories", categories);
   }, []);
@@ -123,11 +121,11 @@ export function TagsPreview({ className, style }: TagsPreviewProps) {
     setEditingTag({ newName: "", nodeId: "", parentId: "" });
   };
 
-  const handleAddChild = async (parentId: string) => {
-    const ids = parentId.split(STR_SEPARATOR).filter(Boolean);
+  const handleAddChild = async (idsStr: string) => {
+    const ids = idsStr.split(STR_SEPARATOR).filter(Boolean);
     const newId = nanoid();
     const newName = "New Tag";
-    const parent = ids.length ? ids[ids.length - 1] : undefined;
+    const parentId = ids.length ? ids[ids.length - 1] : undefined;
 
     setTagsList((prev) => {
       const next: Record<string, TagNode> = { ...prev };
@@ -171,7 +169,11 @@ export function TagsPreview({ className, style }: TagsPreviewProps) {
     });
 
     // persist outside state updater
-    await addCategory(newName, newId, parent);
+    await addCategory(newName, newId, parentId);
+    if (parentId) {
+      // expand the category
+      setExpandedIds((prev) => new Set([...prev, parentId]));
+    }
   };
 
   const handleDeleteTag = async (path: string) => {
