@@ -34,3 +34,32 @@
   gap: 12px;
   margin-bottom: 12px;
 }
+
+.primary-btn {
+  &:hover{
+    color: var(--black-50) !important;
+  }
+}
+
+.custom-radio-group {
+  & > label {
+    margin: 0px 10px;
+    border-radius: 16px !important;
+    background-color: #28392e !important;
+    color: #fff;
+    border: none;
+    outline: none;
+  }
+
+    & .ant-radio-button-wrapper-checked{
+    background-color: var(--green-500) !important;
+    color: var(--black-50) !important;
+  }
+}
+
+.link-btn {
+  color: var(--green-500) !important;
+  &:hover{
+    text-decoration: underline;
+  }
+}

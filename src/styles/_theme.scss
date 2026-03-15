@@ -1,0 +1,23 @@
+
+:root {
+  // Brand
+  --color-primary:        var(--green-500);    // #13ec5b  — vivid green
+  --color-primary-hover:  var(--green-400);    // #4ade80  — lighter on hover
+  --color-primary-active: var(--green-600);    // #16a34a  — pressed state
+
+  // Surfaces & backgrounds
+  --color-bg-base:        #0b1410;             // deepest app background
+  --color-bg-surface:     var(--green-950);    // #111813  — card / panel surface
+  --color-sidebar-bg:     var(--green-900);    // #102216  — sidebar background
+
+  // Text
+  --color-text-base:      var(--green-50);     // #f0fdf4  — primary body text
+  --color-text-muted:     var(--green-300);    // #86efac  — secondary / dimmed text
+
+  // Border
+  --color-border:         var(--green-800);    // #115e2a
+
+  // NOTE: Ant Design component colors are set via ConfigProvider in App.tsx.
+  // Use these semantic tokens in your own SCSS. For component-level overrides,
+  // re-declare the var on a scoped selector in the component's own SCSS file.
+}

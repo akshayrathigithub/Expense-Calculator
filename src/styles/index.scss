@@ -1,6 +1,7 @@
 @use "./variables" as *;
 @use "./utilities";
 @use "./colors";
+@use "./theme";
 
 :root {
   font-size: $root-font-size;
@@ -10,12 +11,14 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html,
 body,
 #root {
-  height: 100%;
+  min-height: 360px;
 }
 
 body {

@@ -26,6 +26,9 @@
   .fs-#{$k} {
     font-size: #{$v};
   }
+  .lh-#{$k} {
+    line-height: #{$v};
+  }
 }
 
 // Flexbox
