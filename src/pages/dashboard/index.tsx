@@ -8,6 +8,7 @@ import { CustomAreaChart } from "@src/components/areachart";
 import { TableV2 } from "@src/components/ui/tableV2";
 import dayjs from "dayjs";
 import type { TableProps } from "antd";
+import commonStyles from "@src/common.module.scss";
 
 const columns: TableProps<any>["columns"] = [
   {
@@ -184,10 +185,10 @@ export function Dashboard() {
     <div className={clsx("h-full")}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-2xl fw-black lh-9 text-white-50 fs-6">Dashboard</p>
+          <p className="fw-black lh-9 text-white-50 fs-6">Dashboard</p>
           <p className="fs-2 text-zinc-500 mt-1">Here's an overview of your spending for the selected period</p>
         </div>
-        <Button type="primary" icon={<PlusOutlined className="fw-medium" />} className={clsx("text-black-50 fw-medium fs-2", styles["primary-btn"])}>
+        <Button type="primary" icon={<PlusOutlined className="fw-medium" />} className={clsx("text-black-50 fw-medium fs-2", commonStyles["primary-btn"])}>
           Add New Expense
         </Button>
       </div>
@@ -245,7 +246,7 @@ export function Dashboard() {
       <div className="bordered rounded-2 p-6 border-green-700 mt-6">
         <div className="flex items-center justify-between mb-4">
           <p className="fs-5 fw-bold text-white-50 lh-7">Recent Transactions</p>
-          <Button type="link" className={clsx(styles["link-btn"], "")}>View All</Button>
+          <Button type="link" className={clsx(commonStyles["link-btn"], "")}>View All</Button>
         </div>
         <TableV2 data={data} columns={columns} />
       </div>

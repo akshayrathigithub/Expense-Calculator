@@ -1,0 +1,12 @@
+.primary-btn {
+  &:hover {
+    color: var(--black-50) !important;
+  }
+}
+
+.link-btn {
+  color: var(--green-500) !important;
+  &:hover {
+    text-decoration: underline;
+  }
+}

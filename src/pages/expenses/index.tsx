@@ -1,13 +1,15 @@
-import { DatePicker } from "@src/components/datepicker";
-import { Button } from "@src/components/ui/button";
 import { CategorySelect } from "@src/components/category-select";
-import { Input } from "@src/components/ui/input";
-import { Textarea } from "@src/components/ui/textarea";
 import { useUiStore } from "@src/store/ui";
 import { useState } from "react";
 import { ExpenseForm } from "@src/store/type";
 import { addExpense } from "@src/lib/expense";
 import { toast } from "react-toastify";
+import { InputNumber, DatePicker, Input, Button } from "antd";
+import styles from "./index.module.scss";
+import clsx from "clsx";
+import commonStyles from "@src/common.module.scss";
+
+const { TextArea } = Input;
 
 const defaultForm: ExpenseForm = {
   amount: "",
@@ -44,34 +46,49 @@ export function Expenses() {
   };
 
   return (
-    <div className="p-4 text-slate-100 h-full">
-      <h1 className="text-xl font-semibold">Add New Expense</h1>
-      <p>Enter the details of your expense to add it to your records.</p>
-      <div>
+    <div className="text-slate-100 h-full">
+      <p className="fw-black lh-9 text-white-50 fs-6">Add New Expense</p>
+      <p className="fs-2 text-zinc-500 mt-1">Enter the details of your expense to add it to your records.</p>
+      <div className="my-6">
         <div className="flex gap-2">
-          <Input
-            label="Amount"
-            placeholder="Enter the amount"
-            type="number"
-            fullWidth
-            value={form.amount}
-            onChange={(e) => setForm({ ...form, amount: e.target.value })}
-          />
-          <DatePicker
-            label="Date"
-            defaultValue={form.date}
-            onChange={(date) => setForm({ ...form, date: date.getTime() })}
-          />
+          <div className="flex-1">
+            <p className="fw-medium fs-3 lh-6 text-white-50 mb-1">Amount</p>
+            <InputNumber prefix="₹"
+              classNames={{
+                actions: styles["hide-custom-btn"],
+                root: styles["custom-input-number"]
+              }}
+              value={form.amount}
+              onChange={(value) => setForm({ ...form, amount: value || "" })}
+            />
+          </div>
+          <div className="flex-1">
+            <p className="fw-medium fs-3 lh-6 text-white-50 mb-1">Date</p>
+            <DatePicker classNames={{
+              root: styles["custom-date-picker"],
+            }}
+              styles={{
+                popup: {
+                  container: { border: '1px solid #13ec5b', borderRadius: 8 },
+                },
+              }}
+              defaultValue={form.date}
+              onChange={(date) => {
+                setForm({ ...form, date: date?.valueOf() || null });
+              }} />
+          </div>
         </div>
 
-        <div className="mt-2">
-          <Textarea
-            label="Note"
+        <div className="mt-6">
+          <p className="fw-medium fs-3 lh-6 text-white-50 mb-1">Note</p>
+          <TextArea
             placeholder="Enter the note"
-            fullWidth
             value={form.note}
-            onChange={(e) => setForm({ ...form, note: e.target.value })}
-          />
+            rows={4}
+            classNames={{
+              root: styles["custom-textarea"]
+            }}
+            onChange={(e) => setForm({ ...form, note: e.target.value })} />
         </div>
         <CategorySelect
           id="categories"
@@ -106,8 +123,8 @@ export function Expenses() {
           placeholder="Search categories..."
         />
         <div className="mt-2 flex justify-end">
-          <Button variant="primary" onClick={handleAddExpense}>
-            Add Expense
+          <Button type="primary" className={clsx("text-black-50 fw-medium fs-2", commonStyles["primary-btn"])} onClick={handleAddExpense}>
+            Save Expense
           </Button>
         </div>
       </div>
